@@ -21,10 +21,10 @@
 
     <aside class="w-full md:w-72 bg-slate-900 text-white p-6 flex flex-col shadow-xl z-10">
         <div class="mb-10">
-            <img src="./images/1.jpg" alt="Logo" class="w-16 h-16 rounded-lg mb-4 object-cover border-2 border-slate-700 shadow-lg" 
+            <img src="./1.png" alt="Logo" class="w-16 h-16 rounded-lg mb-4 object-cover border-2 border-slate-700 shadow-lg" 
                  onerror="this.src='https://ui-avatars.com/api/?name=HS&background=0D8ABC&color=fff'">
             <h1 class="text-xl font-extrabold text-blue-400 uppercase tracking-tighter">HealthScore</h1>
-            <p class="text-slate-500 text-[10px] font-bold">ENTERPRISE ANALYTICS v2.6</p>
+            <p class="text-slate-500 text-[10px] font-bold uppercase tracking-widest">ENTERPRISE ANALYTICS v2.6</p>
         </div>
 
         <div class="flex flex-col gap-2">
@@ -46,13 +46,9 @@
             <h2 class="text-2xl md:text-4xl font-black text-slate-800 mb-6 leading-tight">
                 Hệ thống chấm điểm sức khỏe doanh nghiệp hỗ trợ quy trình cấp tín dụng doanh nghiệp
             </h2>
-            <div id="status-badge" class="px-4 py-2 bg-slate-200 text-slate-600 rounded-full text-xs font-bold mb-4">
-                ĐANG KHỞI TẠO DỮ LIỆU...
+            <div id="status-badge" class="px-4 py-2 bg-slate-200 text-slate-600 rounded-full text-xs font-bold mb-4 uppercase tracking-widest">
+                Đang khởi tạo dữ liệu...
             </div>
-            <p class="text-slate-500 font-medium leading-relaxed">
-                Vui lòng đợi trong giây lát để hệ thống trích xuất dữ liệu từ file Excel. 
-                Sau đó, chọn mã doanh nghiệp ở menu bên trái.
-            </p>
         </div>
 
         <div id="main-content" class="hidden animate-fade-in">
@@ -92,12 +88,12 @@
                     <div class="flex-1 bg-[#1B5E20] rounded-r-full"></div>
                 </div>
                 <div class="flex justify-between mt-4 text-[10px] font-black text-slate-400 tracking-tighter">
-                    <span class="w-1/6 text-center">HẠNG D</span>
-                    <span class="w-1/6 text-center">HẠNG C</span>
-                    <span class="w-1/6 text-center">HẠNG B</span>
-                    <span class="w-1/6 text-center">HẠNG A</span>
-                    <span class="w-1/6 text-center">HẠNG AA</span>
-                    <span class="w-1/6 text-center">HẠNG AAA</span>
+                    <span class="w-1/6 text-center text-xs">Hạng D</span>
+                    <span class="w-1/6 text-center text-xs">Hạng C</span>
+                    <span class="w-1/6 text-center text-xs">Hạng B</span>
+                    <span class="w-1/6 text-center text-xs">Hạng A</span>
+                    <span class="w-1/6 text-center text-xs">Hạng AA</span>
+                    <span class="w-1/6 text-center text-xs">Hạng AAA</span>
                 </div>
             </div>
 
@@ -114,7 +110,6 @@
     </main>
 
     <script>
-        // File Excel nằm cùng thư mục
         const EXCEL_URL = 'scored_data_423501.xlsx'; 
 
         let globalData = [];
@@ -142,13 +137,13 @@
                 globalData = XLSX.utils.sheet_to_json(firstSheet);
                 
                 if (globalData.length > 0) {
-                    statusBadge.textContent = "DỮ LIỆU ĐÃ SẴN SÀNG";
-                    statusBadge.className = "px-4 py-2 bg-emerald-100 text-emerald-600 rounded-full text-xs font-bold mb-4";
+                    statusBadge.textContent = "Hệ thống sẵn sàng, vui lòng chọn mã doanh nghiệp";
+                    statusBadge.className = "px-4 py-2 bg-emerald-100 text-emerald-600 rounded-full text-xs font-bold mb-4 uppercase tracking-widest animate-pulse";
                     initApp();
                 }
             } catch (error) {
-                statusBadge.textContent = "LỖI: KHÔNG ĐỌC ĐƯỢC DỮ LIỆU";
-                statusBadge.className = "px-4 py-2 bg-red-100 text-red-600 rounded-full text-xs font-bold mb-4";
+                statusBadge.textContent = "Lỗi kết nối dữ liệu";
+                statusBadge.className = "px-4 py-2 bg-red-100 text-red-600 rounded-full text-xs font-bold mb-4 uppercase tracking-widest";
                 console.error(error);
             }
         }
