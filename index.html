@@ -15,7 +15,6 @@
         .arrow { width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 8px solid; margin-top: -1px; }
         .animate-fade-in { animation: fadeIn 0.5s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        /* Style cho input tìm kiếm để đồng bộ với giao diện tối */
         .search-input::placeholder { color: #94a3b8; }
     </style>
 </head>
@@ -29,16 +28,10 @@
 
         <div class="flex flex-col gap-2 relative">
             <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Tìm kiếm hoặc chọn mã DN</label>
-            
             <input list="companyList" id="companySearch" placeholder="Gõ để tìm mã..." 
                    class="bg-slate-800 border-none text-white px-4 py-3 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 transition-all search-input w-full">
-            
-            <datalist id="companyList">
-                </datalist>
-
-            <button onclick="document.getElementById('companySearch').value=''" class="absolute right-3 top-9 text-slate-500 hover:text-white text-xs">
-                ✕
-            </button>
+            <datalist id="companyList"></datalist>
+            <button onclick="document.getElementById('companySearch').value=''" class="absolute right-3 top-9 text-slate-500 hover:text-white text-xs">✕</button>
         </div>
 
         <div class="mt-auto pt-6 border-t border-slate-800 text-[10px] text-slate-500 font-medium italic">
@@ -62,7 +55,10 @@
             <div class="mb-8 border-b border-slate-200 pb-6 flex justify-between items-end">
                 <div>
                     <h2 class="text-4xl font-black text-slate-800 tracking-tight" id="company-name">---</h2>
-                    <p class="text-blue-600 font-bold tracking-widest uppercase text-sm mt-1" id="company-code">---</p>
+                    <div class="flex flex-col gap-1 mt-1">
+                        <p class="text-blue-600 font-bold tracking-widest uppercase text-sm" id="company-code">---</p>
+                        <p class="text-slate-500 text-xs font-semibold" id="company-industry">Ngành: ---</p>
+                    </div>
                 </div>
             </div>
 
@@ -108,7 +104,15 @@
                 <div class="p-4 bg-slate-50/50 border-b border-slate-100 font-bold text-xs uppercase text-slate-500 tracking-widest">Bảng chỉ số tài chính đa kỳ</div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-sm divide-y divide-slate-100">
-                        <thead id="table-head" class="bg-slate-50/50 text-[10px] font-black uppercase text-slate-400"></thead>
+                        <thead id="table-head" class="bg-slate-50/50 text-[10px] font-black uppercase text-slate-400">
+                            <tr>
+                                <th class="p-4">Năm</th>
+                                <th class="p-4">Tỷ số thanh toán nhanh</th>
+                                <th class="p-4">Tổng nợ / Tổng tài sản</th>
+                                <th class="p-4">ROA</th>
+                                <th class="p-4">Tăng trưởng doanh thu</th>
+                            </tr>
+                        </thead>
                         <tbody id="table-body" class="divide-y divide-slate-100 text-slate-700 font-medium"></tbody>
                     </table>
                 </div>
@@ -129,20 +133,17 @@
             1: "Thua lỗ, mất khả năng thanh toán" 
         };
         const COLORS = { 'AAA': '#1B5E20', 'AA': '#43A047', 'A': '#A5D6A7', 'B': '#B8A64B', 'C': '#FFB74D', 'D': '#E57373' };
-        const VARS = ['QUICK_RATIO', 'CURRENT_RATIO', 'ROA', 'TANG TRUONG DT', 'EBIT MARGIN'];
 
         async function loadExcel() {
             const statusBadge = document.getElementById('status-badge');
             try {
                 const response = await fetch(EXCEL_URL);
                 if (!response.ok) throw new Error('Không thể tải file Excel');
-                
                 const arrayBuffer = await response.arrayBuffer();
                 const data = new Uint8Array(arrayBuffer);
                 const workbook = XLSX.read(data, { type: 'array' });
                 const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
                 globalData = XLSX.utils.sheet_to_json(firstSheet);
-                
                 if (globalData.length > 0) {
                     statusBadge.textContent = "Hệ thống sẵn sàng, vui lòng chọn mã doanh nghiệp";
                     statusBadge.className = "px-4 py-2 bg-emerald-100 text-emerald-600 rounded-full text-xs font-bold mb-4 uppercase tracking-widest animate-pulse";
@@ -168,23 +169,15 @@
             const input = document.getElementById('companySearch');
             const dataList = document.getElementById('companyList');
             const mas = [...new Set(globalData.map(d => d['MÃ']))].sort();
-            
-            // Điền danh sách doanh nghiệp vào datalist
             dataList.innerHTML = '';
             mas.forEach(ma => {
                 const option = document.createElement('option');
                 option.value = ma;
                 dataList.appendChild(option);
             });
-
-            // Lắng nghe sự kiện gõ/chọn
             input.addEventListener('input', (e) => {
                 const ma = e.target.value;
-                
-                // Chỉ xử lý nếu mã nhập vào tồn tại trong dữ liệu
-                if(mas.includes(ma)) {
-                    updateDashboard(ma);
-                }
+                if(mas.includes(ma)) { updateDashboard(ma); }
             });
         }
 
@@ -197,6 +190,9 @@
 
             document.getElementById('company-name').textContent = latest['TÊN CÔNG TY'];
             document.getElementById('company-code').textContent = `MÃ DN: ${ma}`;
+            // 1) CẬP NHẬT NGÀNH TRONG THÔNG TIN DOANH NGHIỆP
+            document.getElementById('company-industry').textContent = `Ngành: ${latest['NGÀNH ICB - CẤP 1'] || 'Chưa xác định'}`;
+            
             document.getElementById('score-val').textContent = Math.round(latest['CREDIT_SCORE']);
             document.getElementById('rating-val').textContent = latest['RATING'];
             document.getElementById('rating-val').style.color = COLORS[latest['RATING']] || '#000';
@@ -208,11 +204,15 @@
             document.getElementById('bubble-val').textContent = Math.round(latest['CREDIT_SCORE']) + ' điểm';
             document.getElementById('arrow-val').style.borderTopColor = COLORS[latest['RATING']] || '#333';
 
-            document.getElementById('table-head').innerHTML = '<tr><th class="p-4">Năm</th>' + VARS.map(v => `<th class="p-4">${v}</th>`).join('') + '</tr>';
-            document.getElementById('table-body').innerHTML = history.map(row => `
+            // 2) ĐỔ DỮ LIỆU VÀO BẢNG CHI TIẾT
+            const body = document.getElementById('table-body');
+            body.innerHTML = history.map(row => `
                 <tr class="hover:bg-slate-50 transition-colors">
                     <td class="p-4 font-bold text-slate-900">${row['NĂM']}</td>
-                    ${VARS.map(v => `<td class="p-4">${row[v] !== undefined ? (typeof row[v] === 'number' ? row[v].toFixed(2) : row[v]) : '-'}</td>`).join('')}
+                    <td class="p-4">${row['QUICK_RATIO'] !== undefined ? Number(row['QUICK_RATIO']).toFixed(2) : '-'}</td>
+                    <td class="p-4">${row['TONG NO/TTS'] !== undefined ? Number(row['TONG NO/TTS']).toFixed(2) : '-'}</td>
+                    <td class="p-4">${row['ROA'] !== undefined ? Number(row['ROA']).toFixed(2) : '-'}</td>
+                    <td class="p-4">${row['TANG TRUONG DT'] !== undefined ? Number(row['TANG TRUONG DT']).toFixed(2) : '-'}</td>
                 </tr>
             `).join('');
         }
