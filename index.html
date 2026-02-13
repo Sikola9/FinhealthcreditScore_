@@ -111,6 +111,7 @@
                                 <th class="p-4">Tổng nợ / Tổng tài sản</th>
                                 <th class="p-4">ROA</th>
                                 <th class="p-4">Tăng trưởng doanh thu</th>
+                                <th class="p-4">EBIT Margin</th>
                             </tr>
                         </thead>
                         <tbody id="table-body" class="divide-y divide-slate-100 text-slate-700 font-medium"></tbody>
@@ -213,6 +214,7 @@
                     <td class="p-4">${row['TONG NO/TTS'] !== undefined ? Number(row['TONG NO/TTS']).toFixed(2) : '-'}</td>
                     <td class="p-4">${row['ROA'] !== undefined ? Number(row['ROA']).toFixed(2) : '-'}</td>
                     <td class="p-4">${row['TANG TRUONG DT'] !== undefined ? Number(row['TANG TRUONG DT']).toFixed(2) : '-'}</td>
+                    <td class="p-4">${row['EBIT MARGIN'] !== undefined ? Number(row['EBIT MARGIN']).toFixed(2) : '-'}</td>
                 </tr>
             `).join('');
         }
