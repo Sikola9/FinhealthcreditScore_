@@ -17,45 +17,59 @@
 </head>
 <body class="flex flex-col md:flex-row min-h-screen">
 
-    <aside class="w-full md:w-72 bg-slate-900 text-white p-6 flex flex-col">
-        <div class="mb-8">
+    <aside class="w-full md:w-72 bg-slate-900 text-white p-6 flex flex-col shadow-xl z-10">
+        <div class="mb-10">
+            <img src="images/1.jpg" alt="Logo" class="w-16 h-16 rounded-lg mb-4 object-cover border-2 border-slate-700 shadow-lg" onerror="this.style.display='none'">
             <h1 class="text-xl font-extrabold text-blue-400 uppercase tracking-tighter">HealthScore</h1>
             <p class="text-slate-500 text-[10px] font-bold">ENTERPRISE ANALYTICS v2.6</p>
         </div>
 
-        <div id="loading-status" class="text-yellow-400 text-sm mb-4 italic">Đang tải dữ liệu từ Excel...</div>
-
         <div class="flex flex-col gap-2">
-            <label class="text-xs font-bold text-slate-400 uppercase">Chọn mã doanh nghiệp</label>
-            <select id="companySelect" class="bg-slate-800 border-none text-white px-4 py-3 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer">
-                <option value="">Đang tải...</option>
+            <label class="text-xs font-bold text-slate-400 uppercase">Tìm kiếm doanh nghiệp</label>
+            <select id="companySelect" class="bg-slate-800 border-none text-white px-4 py-3 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer transition-all">
+                <option value="" disabled selected>Đang kiểm tra dữ liệu...</option>
             </select>
+        </div>
+
+        <div class="mt-auto pt-6 border-t border-slate-800 text-[10px] text-slate-500 font-medium italic">
+            Dữ liệu nội bộ được bảo mật
         </div>
     </aside>
 
-    <main class="flex-1 p-6 md:p-10">
-        <div id="main-content" class="hidden">
-            <div class="mb-8 border-b pb-4">
-                <h2 class="text-3xl font-black text-slate-800" id="company-name">---</h2>
-                <p class="text-slate-500 font-semibold" id="company-code">---</p>
+    <main class="flex-1 p-6 md:p-10 flex flex-col">
+        
+        <div id="welcome-screen" class="flex-1 flex flex-col items-center justify-center text-center max-w-2xl mx-auto">
+            <div class="w-20 h-1 bg-blue-600 mb-6 rounded-full"></div>
+            <h2 class="text-2xl md:text-3xl font-black text-slate-800 mb-4 leading-tight">
+                Hệ thống chấm điểm sức khỏe doanh nghiệp hỗ trợ quy trình cấp tín dụng doanh nghiệp
+            </h2>
+            <p class="text-slate-500 font-medium">Vui lòng chọn mã doanh nghiệp ở thanh menu bên trái để bắt đầu phân tích chỉ số chi tiết.</p>
+        </div>
+
+        <div id="main-content" class="hidden animate-in fade-in duration-500">
+            <div class="mb-8 border-b border-slate-200 pb-6 flex justify-between items-end">
+                <div>
+                    <h2 class="text-4xl font-black text-slate-800 tracking-tight" id="company-name">---</h2>
+                    <p class="text-blue-600 font-bold tracking-widest uppercase text-sm mt-1" id="company-code">---</p>
+                </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                    <p class="text-slate-400 text-[10px] font-black uppercase">Điểm tín dụng</p>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 transition-all hover:shadow-md">
+                    <p class="text-slate-400 text-[10px] font-black uppercase tracking-widest">Điểm tín dụng</p>
                     <div class="text-4xl font-black text-slate-800" id="score-val">0</div>
                 </div>
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                    <p class="text-slate-400 text-[10px] font-black uppercase">Xếp hạng</p>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 transition-all hover:shadow-md">
+                    <p class="text-slate-400 text-[10px] font-black uppercase tracking-widest">Xếp hạng</p>
                     <div class="text-4xl font-black" id="rating-val">---</div>
                 </div>
-                <div class="bg-blue-600 p-6 rounded-xl shadow-sm text-white">
-                    <p class="text-blue-200 text-[10px] font-black uppercase">Sức khỏe tài chính</p>
-                    <p class="text-sm font-bold mt-1" id="cluster-desc">---</p>
+                <div class="bg-blue-600 p-6 rounded-2xl shadow-lg text-white">
+                    <p class="text-blue-200 text-[10px] font-black uppercase tracking-widest">Sức khỏe tài chính</p>
+                    <p class="text-sm font-bold mt-2 leading-relaxed" id="cluster-desc">---</p>
                 </div>
             </div>
 
-            <div class="bg-white p-10 rounded-xl shadow-sm border border-slate-200 mb-8">
+            <div class="bg-white p-10 rounded-2xl shadow-sm border border-slate-100 mb-8">
                 <div class="gauge-container">
                     <div class="pointer" id="pointer" style="left: 0%;">
                         <div class="bubble" id="bubble-val">0 điểm</div>
@@ -69,16 +83,16 @@
                     <div class="flex-1 bg-[#1B5E20] rounded-r-full"></div>
                 </div>
                 <div class="flex justify-between mt-4 text-[10px] font-black text-slate-400">
-                    <span>D</span><span>C</span><span>B</span><span>A</span><span>AA</span><span>AAA</span>
+                    <span>HẠNG D</span><span>HẠNG C</span><span>HẠNG B</span><span>HẠNG A</span><span>HẠNG AA</span><span>HẠNG AAA</span>
                 </div>
             </div>
 
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                <div class="p-4 bg-slate-50 border-b font-bold text-xs uppercase text-slate-600">Bảng chỉ số tài chính</div>
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                <div class="p-4 bg-slate-50/50 border-b border-slate-100 font-bold text-xs uppercase text-slate-500 tracking-widest">Bảng chỉ số tài chính đa kỳ</div>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm divide-y">
-                        <thead id="table-head" class="bg-slate-50 text-[10px] font-black uppercase text-slate-400"></thead>
-                        <tbody id="table-body" class="divide-y text-slate-700"></tbody>
+                    <table class="w-full text-left text-sm divide-y divide-slate-100">
+                        <thead id="table-head" class="bg-slate-50/50 text-[10px] font-black uppercase text-slate-400"></thead>
+                        <tbody id="table-body" class="divide-y divide-slate-100 text-slate-700 font-medium"></tbody>
                     </table>
                 </div>
             </div>
@@ -86,16 +100,13 @@
     </main>
 
     <script>
-        // --- CẤU HÌNH ĐƯỜNG DẪN FILE ---
-        // Khi bạn deploy lên Vercel, file Excel nằm cùng thư mục nên chỉ cần ghi tên file
         const EXCEL_URL = 'scored_data_423501.xlsx'; 
 
         let globalData = [];
         const CLUSTER_MAP = { 4: "Sinh lời cao, nợ thấp, thanh khoản tốt", 2: "Vòng quay vốn nhanh, hiệu suất cao", 3: "Thừa tiền mặt, ít nợ, tăng trưởng chậm", 5: "Đòn bẩy cao, sinh lời trung bình", 0: "Tăng trưởng âm, sinh lời yếu", 1: "Thua lỗ, mất khả năng thanh toán" };
         const COLORS = { 'AAA': '#1B5E20', 'AA': '#43A047', 'A': '#A5D6A7', 'B': '#B8A64B', 'C': '#FFB74D', 'D': '#E57373' };
-        const VARS = ['QUICK_RATIO', 'CURRENT_RATIO', 'ROA', 'TANG TRUONG DT', 'EBIT MARGIN']; // Có thể thêm các cột khác vào đây
+        const VARS = ['QUICK_RATIO', 'CURRENT_RATIO', 'ROA', 'TANG TRUONG DT', 'EBIT MARGIN'];
 
-        // Hàm đọc file Excel từ URL
         async function loadExcel() {
             try {
                 const response = await fetch(EXCEL_URL);
@@ -104,12 +115,9 @@
                 const workbook = XLSX.read(data, { type: 'array' });
                 const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
                 globalData = XLSX.utils.sheet_to_json(firstSheet);
-                
-                document.getElementById('loading-status').classList.add('hidden');
                 initApp();
             } catch (error) {
-                document.getElementById('loading-status').textContent = "Lỗi: Không tìm thấy file Excel!";
-                console.error(error);
+                console.error("Lỗi tải file:", error);
             }
         }
 
@@ -126,7 +134,7 @@
             const select = document.getElementById('companySelect');
             const mas = [...new Set(globalData.map(d => d['MÃ']))].sort();
             
-            select.innerHTML = '<option value="">Chọn mã...</option>';
+            select.innerHTML = '<option value="" selected>--- Chọn Mã Doanh Nghiệp ---</option>';
             mas.forEach(ma => {
                 const opt = document.createElement('option');
                 opt.value = ma; opt.textContent = ma;
@@ -140,9 +148,13 @@
                 const history = globalData.filter(d => d['MÃ'] === ma).sort((a,b) => b['NĂM'] - a['NĂM']);
                 const latest = history[0];
 
+                // Chuyển đổi màn hình
+                document.getElementById('welcome-screen').classList.add('hidden');
                 document.getElementById('main-content').classList.remove('hidden');
+
+                // Cập nhật thông tin
                 document.getElementById('company-name').textContent = latest['TÊN CÔNG TY'];
-                document.getElementById('company-code').textContent = ma;
+                document.getElementById('company-code').textContent = `MÃ DN: ${ma}`;
                 document.getElementById('score-val').textContent = Math.round(latest['CREDIT_SCORE']);
                 document.getElementById('rating-val').textContent = latest['RATING'];
                 document.getElementById('rating-val').style.color = COLORS[latest['RATING']];
@@ -157,7 +169,7 @@
                 // Table
                 document.getElementById('table-head').innerHTML = '<tr><th class="p-4">Năm</th>' + VARS.map(v => `<th class="p-4">${v}</th>`).join('') + '</tr>';
                 document.getElementById('table-body').innerHTML = history.map(row => `
-                    <tr><td class="p-4 font-bold text-slate-900">${row['NĂM']}</td>${VARS.map(v => `<td class="p-4">${row[v] ? row[v].toLocaleString() : '-'}</td>`).join('')}</tr>
+                    <tr class="hover:bg-slate-50 transition-colors"><td class="p-4 font-bold text-slate-900">${row['NĂM']}</td>${VARS.map(v => `<td class="p-4">${row[v] ? row[v].toLocaleString() : '-'}</td>`).join('')}</tr>
                 `).join('');
             });
         }
