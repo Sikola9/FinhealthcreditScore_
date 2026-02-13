@@ -13,21 +13,24 @@
         .pointer { position: absolute; top: -40px; transform: translateX(-50%); transition: all 0.6s ease; display: flex; flex-direction: column; align-items: center; }
         .bubble { padding: 4px 12px; border-radius: 20px; color: white; font-weight: 800; font-size: 12px; white-space: nowrap; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .arrow { width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 8px solid; margin-top: -1px; }
+        .animate-fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body class="flex flex-col md:flex-row min-h-screen">
 
     <aside class="w-full md:w-72 bg-slate-900 text-white p-6 flex flex-col shadow-xl z-10">
         <div class="mb-10">
-            <img src="images/1.jpg" alt="Logo" class="w-16 h-16 rounded-lg mb-4 object-cover border-2 border-slate-700 shadow-lg" onerror="this.style.display='none'">
+            <img src="./images/1.jpg" alt="Logo" class="w-16 h-16 rounded-lg mb-4 object-cover border-2 border-slate-700 shadow-lg" 
+                 onerror="this.src='https://ui-avatars.com/api/?name=HS&background=0D8ABC&color=fff'">
             <h1 class="text-xl font-extrabold text-blue-400 uppercase tracking-tighter">HealthScore</h1>
             <p class="text-slate-500 text-[10px] font-bold">ENTERPRISE ANALYTICS v2.6</p>
         </div>
 
         <div class="flex flex-col gap-2">
-            <label class="text-xs font-bold text-slate-400 uppercase">Tìm kiếm doanh nghiệp</label>
+            <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Tìm kiếm doanh nghiệp</label>
             <select id="companySelect" class="bg-slate-800 border-none text-white px-4 py-3 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer transition-all">
-                <option value="" disabled selected>Đang kiểm tra dữ liệu...</option>
+                <option value="" disabled selected>Đang kiểm tra hệ thống...</option>
             </select>
         </div>
 
@@ -36,17 +39,23 @@
         </div>
     </aside>
 
-    <main class="flex-1 p-6 md:p-10 flex flex-col">
+    <main class="flex-1 p-6 md:p-10 flex flex-col bg-[#f8fafc]">
         
-        <div id="welcome-screen" class="flex-1 flex flex-col items-center justify-center text-center max-w-2xl mx-auto">
-            <div class="w-20 h-1 bg-blue-600 mb-6 rounded-full"></div>
-            <h2 class="text-2xl md:text-3xl font-black text-slate-800 mb-4 leading-tight">
+        <div id="welcome-screen" class="flex-1 flex flex-col items-center justify-center text-center max-w-2xl mx-auto animate-fade-in">
+            <div class="w-20 h-1.5 bg-blue-600 mb-8 rounded-full"></div>
+            <h2 class="text-2xl md:text-4xl font-black text-slate-800 mb-6 leading-tight">
                 Hệ thống chấm điểm sức khỏe doanh nghiệp hỗ trợ quy trình cấp tín dụng doanh nghiệp
             </h2>
-            <p class="text-slate-500 font-medium">Vui lòng chọn mã doanh nghiệp ở thanh menu bên trái để bắt đầu phân tích chỉ số chi tiết.</p>
+            <div id="status-badge" class="px-4 py-2 bg-slate-200 text-slate-600 rounded-full text-xs font-bold mb-4">
+                ĐANG KHỞI TẠO DỮ LIỆU...
+            </div>
+            <p class="text-slate-500 font-medium leading-relaxed">
+                Vui lòng đợi trong giây lát để hệ thống trích xuất dữ liệu từ file Excel. 
+                Sau đó, chọn mã doanh nghiệp ở menu bên trái.
+            </p>
         </div>
 
-        <div id="main-content" class="hidden animate-in fade-in duration-500">
+        <div id="main-content" class="hidden animate-fade-in">
             <div class="mb-8 border-b border-slate-200 pb-6 flex justify-between items-end">
                 <div>
                     <h2 class="text-4xl font-black text-slate-800 tracking-tight" id="company-name">---</h2>
@@ -82,8 +91,13 @@
                     <div class="flex-1 bg-[#43A047]"></div>
                     <div class="flex-1 bg-[#1B5E20] rounded-r-full"></div>
                 </div>
-                <div class="flex justify-between mt-4 text-[10px] font-black text-slate-400">
-                    <span>HẠNG D</span><span>HẠNG C</span><span>HẠNG B</span><span>HẠNG A</span><span>HẠNG AA</span><span>HẠNG AAA</span>
+                <div class="flex justify-between mt-4 text-[10px] font-black text-slate-400 tracking-tighter">
+                    <span class="w-1/6 text-center">HẠNG D</span>
+                    <span class="w-1/6 text-center">HẠNG C</span>
+                    <span class="w-1/6 text-center">HẠNG B</span>
+                    <span class="w-1/6 text-center">HẠNG A</span>
+                    <span class="w-1/6 text-center">HẠNG AA</span>
+                    <span class="w-1/6 text-center">HẠNG AAA</span>
                 </div>
             </div>
 
@@ -100,24 +114,42 @@
     </main>
 
     <script>
+        // File Excel nằm cùng thư mục
         const EXCEL_URL = 'scored_data_423501.xlsx'; 
 
         let globalData = [];
-        const CLUSTER_MAP = { 4: "Sinh lời cao, nợ thấp, thanh khoản tốt", 2: "Vòng quay vốn nhanh, hiệu suất cao", 3: "Thừa tiền mặt, ít nợ, tăng trưởng chậm", 5: "Đòn bẩy cao, sinh lời trung bình", 0: "Tăng trưởng âm, sinh lời yếu", 1: "Thua lỗ, mất khả năng thanh toán" };
+        const CLUSTER_MAP = { 
+            4: "Sinh lời cao, nợ thấp, thanh khoản tốt", 
+            2: "Vòng quay vốn nhanh, hiệu suất cao", 
+            3: "Thừa tiền mặt, ít nợ, tăng trưởng chậm", 
+            5: "Đòn bẩy cao, sinh lời trung bình", 
+            0: "Tăng trưởng âm, sinh lời yếu", 
+            1: "Thua lỗ, mất khả năng thanh toán" 
+        };
         const COLORS = { 'AAA': '#1B5E20', 'AA': '#43A047', 'A': '#A5D6A7', 'B': '#B8A64B', 'C': '#FFB74D', 'D': '#E57373' };
         const VARS = ['QUICK_RATIO', 'CURRENT_RATIO', 'ROA', 'TANG TRUONG DT', 'EBIT MARGIN'];
 
         async function loadExcel() {
+            const statusBadge = document.getElementById('status-badge');
             try {
                 const response = await fetch(EXCEL_URL);
+                if (!response.ok) throw new Error('Không thể tải file Excel');
+                
                 const arrayBuffer = await response.arrayBuffer();
                 const data = new Uint8Array(arrayBuffer);
                 const workbook = XLSX.read(data, { type: 'array' });
                 const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
                 globalData = XLSX.utils.sheet_to_json(firstSheet);
-                initApp();
+                
+                if (globalData.length > 0) {
+                    statusBadge.textContent = "DỮ LIỆU ĐÃ SẴN SÀNG";
+                    statusBadge.className = "px-4 py-2 bg-emerald-100 text-emerald-600 rounded-full text-xs font-bold mb-4";
+                    initApp();
+                }
             } catch (error) {
-                console.error("Lỗi tải file:", error);
+                statusBadge.textContent = "LỖI: KHÔNG ĐỌC ĐƯỢC DỮ LIỆU";
+                statusBadge.className = "px-4 py-2 bg-red-100 text-red-600 rounded-full text-xs font-bold mb-4";
+                console.error(error);
             }
         }
 
@@ -148,28 +180,28 @@
                 const history = globalData.filter(d => d['MÃ'] === ma).sort((a,b) => b['NĂM'] - a['NĂM']);
                 const latest = history[0];
 
-                // Chuyển đổi màn hình
                 document.getElementById('welcome-screen').classList.add('hidden');
                 document.getElementById('main-content').classList.remove('hidden');
 
-                // Cập nhật thông tin
                 document.getElementById('company-name').textContent = latest['TÊN CÔNG TY'];
                 document.getElementById('company-code').textContent = `MÃ DN: ${ma}`;
                 document.getElementById('score-val').textContent = Math.round(latest['CREDIT_SCORE']);
                 document.getElementById('rating-val').textContent = latest['RATING'];
-                document.getElementById('rating-val').style.color = COLORS[latest['RATING']];
-                document.getElementById('cluster-desc').textContent = CLUSTER_MAP[latest['CLUSTER_CLASS']] || "Chưa xác định";
+                document.getElementById('rating-val').style.color = COLORS[latest['RATING']] || '#000';
+                document.getElementById('cluster-desc').textContent = CLUSTER_MAP[latest['CLUSTER_CLASS']] || "Chưa xác định đặc điểm nhóm";
 
                 const pos = getPos(latest['CREDIT_SCORE']);
                 document.getElementById('pointer').style.left = pos + '%';
-                document.getElementById('bubble-val').style.backgroundColor = COLORS[latest['RATING']];
+                document.getElementById('bubble-val').style.backgroundColor = COLORS[latest['RATING']] || '#333';
                 document.getElementById('bubble-val').textContent = Math.round(latest['CREDIT_SCORE']) + ' điểm';
-                document.getElementById('arrow-val').style.borderTopColor = COLORS[latest['RATING']];
+                document.getElementById('arrow-val').style.borderTopColor = COLORS[latest['RATING']] || '#333';
 
-                // Table
                 document.getElementById('table-head').innerHTML = '<tr><th class="p-4">Năm</th>' + VARS.map(v => `<th class="p-4">${v}</th>`).join('') + '</tr>';
                 document.getElementById('table-body').innerHTML = history.map(row => `
-                    <tr class="hover:bg-slate-50 transition-colors"><td class="p-4 font-bold text-slate-900">${row['NĂM']}</td>${VARS.map(v => `<td class="p-4">${row[v] ? row[v].toLocaleString() : '-'}</td>`).join('')}</tr>
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="p-4 font-bold text-slate-900">${row['NĂM']}</td>
+                        ${VARS.map(v => `<td class="p-4">${row[v] !== undefined ? (typeof row[v] === 'number' ? row[v].toFixed(2) : row[v]) : '-'}</td>`).join('')}
+                    </tr>
                 `).join('');
             });
         }
